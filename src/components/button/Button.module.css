@@ -6,6 +6,16 @@
   font-size: 2rem;
   color: var(--text-color);
   cursor: pointer;
+  transition: var(--transition-out);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+}
+
+.button:hover {
+  transform: scale(0.975);
+  transition: var(--transition-in);
 }
 
 .primary {

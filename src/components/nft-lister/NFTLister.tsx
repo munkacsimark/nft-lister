@@ -1,5 +1,5 @@
-import { FunctionComponent, useState } from "react";
-import useSWR from "swr";
+import { FunctionComponent, useMemo, useState } from "react";
+import useSWRInfinite from "swr/infinite";
 import { getNFTsForCollection } from "../../utils/alchemy";
 import type {
   GetNFTsForCollectionResponse,
@@ -14,6 +14,8 @@ import NFTDetails from "../nft-details/NFTDetails";
 import type { NFTDetails as NFTDetailsType } from "../nft-details/NFTDetails";
 import styles from "./NFTLister.module.css";
 
+const LISTER_LIMIT = 20;
+
 const reduceNFTDetails = ({
   id: {
     tokenId,
@@ -24,11 +26,14 @@ const reduceNFTDetails = ({
   media,
   metadata: { attributes },
 }: GetNFTsForCollectionResponseNFT) => ({
+  rawTokenId: tokenId, // needed only for React key
   tokenId: formatTokenId(tokenId),
   tokenType,
   title,
   description,
-  media: media.map(({ thumbnail }) => thumbnail),
+  media: media.reduce<string[]>((accumulator, { thumbnail }) => {
+    return thumbnail ? [...accumulator, thumbnail] : accumulator;
+  }, []),
   attributes,
 });
 
@@ -37,14 +42,41 @@ type NFTListerProps = { contractAddress: string };
 const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
   const [selectedNFT, setSelectedNFT] = useState<NFTDetailsType | null>(null);
 
-  const { data, error, isLoading } = useSWR<GetNFTsForCollectionResponse>(
-    contractAddress ? getNFTsForCollection(contractAddress) : null,
-    fetcher
+  const getKey = useMemo(
+    () =>
+      (pageIndex: number, previousPageData: GetNFTsForCollectionResponse) => {
+        if (previousPageData && !previousPageData.nfts) return null;
+
+        // first page, we don't have `previousPageData`
+        if (pageIndex === 0)
+          return getNFTsForCollection(contractAddress, LISTER_LIMIT);
+
+        return getNFTsForCollection(
+          contractAddress,
+          LISTER_LIMIT,
+          previousPageData.nextToken
+        );
+      },
+    [contractAddress]
   );
+
+  const { data, error, isLoading, size, setSize } =
+    useSWRInfinite<GetNFTsForCollectionResponse>(getKey, fetcher);
+
+  const isLoadingMore =
+    isLoading || (size > 0 && data && data[size - 1] === undefined);
+
+  const isReachingEnd =
+    data?.[0]?.nfts.length === 0 ||
+    (data && data[data.length - 1]?.nfts.length < LISTER_LIMIT);
 
   const handleShowNFTDetailsModal = (nftDetails: NFTDetailsType) =>
     setSelectedNFT(nftDetails);
   const handleCloseNFTDetailsModal = () => setSelectedNFT(null);
+
+  const handleLoadMore = () => {
+    setSize(size + 1);
+  };
 
   const handleOpenSeaOpen = () => {
     if (!selectedNFT) {
@@ -74,19 +106,34 @@ const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
   }
 
   return (
-    <div className={styles.container}>
-      {data &&
-        data.nfts
-          .map((nft) => reduceNFTDetails(nft))
-          .map((nftDetails) => (
-            <NFTBox
-              key={nftDetails.tokenId}
-              id={nftDetails.tokenId}
-              media={nftDetails.media[0]}
-              title={nftDetails.title}
-              onShowDetails={() => handleShowNFTDetailsModal(nftDetails)}
-            />
-          ))}
+    <>
+      <div className={styles.container}>
+        <div className={styles.nftList}>
+          {data &&
+            data.map(({ nfts }) =>
+              nfts
+                .map((nft) => reduceNFTDetails(nft))
+                .map((nftDetails) => (
+                  <NFTBox
+                    key={nftDetails.rawTokenId}
+                    id={nftDetails.tokenId}
+                    media={nftDetails.media[0]}
+                    title={nftDetails.title}
+                    onShowDetails={() => handleShowNFTDetailsModal(nftDetails)}
+                  />
+                ))
+            )}
+        </div>
+        {!isReachingEnd && (
+          <Button
+            onClick={handleLoadMore}
+            className={styles.loadMoreButton}
+            disabled={isLoadingMore}
+          >
+            {isLoadingMore ? "Loading..." : "Load more"}
+          </Button>
+        )}
+      </div>
       <Modal isOpen={!!selectedNFT} onClose={handleCloseNFTDetailsModal}>
         {selectedNFT && (
           <>
@@ -100,7 +147,7 @@ const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
           </>
         )}
       </Modal>
-    </div>
+    </>
   );
 };
 

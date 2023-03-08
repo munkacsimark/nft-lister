@@ -34,12 +34,12 @@ const NFTDetails: FunctionComponent<NFTDetailsProps> = ({
           <div className={styles.description}>{description}</div>
         </>
       )}
-      {!!media.length && (
+      {media.length !== 0 && (
         <>
           <h3>Media</h3>
           <div className={styles.media}>
             {media.map((url) => (
-              <img src={url} className={styles.mediaItem} />
+              <img key={url} src={url} className={styles.mediaItem} />
             ))}
           </div>
         </>
@@ -48,12 +48,14 @@ const NFTDetails: FunctionComponent<NFTDetailsProps> = ({
         <>
           <h3>Attributes</h3>
           <table className={styles.attributes}>
-            {attributes.map((attribute) => (
-              <tr>
-                <td className={styles.traitType}>{attribute.trait_type}:</td>
-                <td>{attribute.value}</td>
-              </tr>
-            ))}
+            <tbody>
+              {attributes.map((attribute) => (
+                <tr>
+                  <td className={styles.traitType}>{attribute.trait_type}:</td>
+                  <td>{attribute.value}</td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </>
       )}

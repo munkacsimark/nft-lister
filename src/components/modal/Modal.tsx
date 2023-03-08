@@ -22,6 +22,7 @@ const Modal: FunctionComponent<ModalProps> = ({
                 xmlns="http://www.w3.org/2000/svg"
                 height="40"
                 width="40"
+                className={styles.closeIcon}
                 onClick={onClose}
               >
                 <path

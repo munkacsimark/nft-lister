@@ -3,9 +3,15 @@
   width: 100%;
   flex-grow: 1;
   display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.nftList {
+  display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  overflow: auto;
 }
 
 .loading,
@@ -17,6 +23,12 @@
   color: var(--red);
 }
 
+.loadMoreButton {
+  margin: 2rem;
+  width: fit-content;
+}
+
+/* Modal content */
 .buyButton {
   margin-top: 2rem;
   width: 100%;
