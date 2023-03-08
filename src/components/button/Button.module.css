@@ -4,26 +4,17 @@
   border: 1px solid;
   font-weight: 700;
   font-size: 2rem;
+  color: var(--text-color);
   cursor: pointer;
 }
 
 .primary {
   background-color: var(--cta-color);
   border-color: var(--cta-color);
-  color: var(--black);
+  color: var(--cta-text-color);
 }
 
 .secondary {
   background-color: var(--background-color);
   border-color: var(--border-color);
-  color: var(--white);
-}
-
-@media (prefers-color-scheme: light) {
-  .primary {
-    color: var(--white);
-  }
-  .secondary {
-    color: var(--black);
-  }
 }

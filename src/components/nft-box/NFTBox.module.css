@@ -8,6 +8,12 @@
   border-radius: 0.5rem;
   margin: 1rem;
   padding: 1rem;
+  transition: var(--transition-out);
+}
+
+.box:hover {
+  transform: scale(1.05);
+  transition: var(--transition-in);
 }
 
 .detail {
