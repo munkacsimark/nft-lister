@@ -1,4 +1,5 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
+import { createPortal } from "react-dom";
 import useSWR from "swr";
 import { getNFTsForCollection } from "../../utils/alchemy";
 import type { GetNFTsForCollectionResponse } from "../../types/alchemy-responses";
@@ -6,18 +7,21 @@ import fetcher from "../../utils/fetcher";
 import { formatTokenId } from "../../utils/format";
 import NFTBox from "../nft-box/NFTBox";
 import styles from "./NFTLister.module.css";
+import Modal from "../modal/Modal";
 
 type NFTListerProps = { contractAddress: string };
 
 const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
+  const [showModalId, setShowModalId] = useState<string | null>(null);
+
   const { data, error, isLoading } = useSWR<GetNFTsForCollectionResponse>(
     contractAddress ? getNFTsForCollection(contractAddress) : null,
     fetcher
   );
 
-  const handleShowNFTDetails = (tokenId: string) => {
-    console.log(contractAddress, tokenId);
-  };
+  const handleShowNFTDetailsModal = (tokenId: string) =>
+    setShowModalId(tokenId);
+  const handleCloseNFTDetailsModal = () => setShowModalId(null);
 
   if (isLoading) {
     return (
@@ -42,9 +46,12 @@ const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
             id={formatTokenId(nft.id.tokenId)}
             media={nft.media[0].thumbnail}
             title={nft.title}
-            onShowDetails={() => handleShowNFTDetails(nft.id.tokenId)}
+            onShowDetails={() => handleShowNFTDetailsModal(nft.id.tokenId)}
           />
         ))}
+      <Modal isOpen={!!showModalId} onClose={handleCloseNFTDetailsModal}>
+        {showModalId}
+      </Modal>
     </div>
   );
 };
