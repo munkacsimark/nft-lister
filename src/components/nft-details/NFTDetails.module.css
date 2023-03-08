@@ -1,0 +1,51 @@
+.title {
+  margin: 0 0 1rem 0;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.info p {
+  margin: 0 0 1rem 0;
+}
+
+.description {
+  max-height: 10rem;
+  overflow: auto;
+  margin-bottom: 1rem;
+}
+
+.media {
+  display: flex;
+  overflow: auto;
+  margin-bottom: 1rem;
+}
+
+.media img:last-child {
+  margin-right: 0;
+}
+
+.mediaItem {
+  width: 15rem;
+  height: 15rem;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.attributes {
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+}
+
+.attributes tr td {
+  padding: 0.5rem 1rem;
+  border: 0.1rem solid var(--border-color);
+}
+
+.traitType {
+  font-weight: 700;
+}

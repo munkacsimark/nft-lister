@@ -1,27 +1,63 @@
 import { FunctionComponent, useState } from "react";
-import { createPortal } from "react-dom";
 import useSWR from "swr";
 import { getNFTsForCollection } from "../../utils/alchemy";
-import type { GetNFTsForCollectionResponse } from "../../types/alchemy-responses";
+import type {
+  GetNFTsForCollectionResponse,
+  GetNFTsForCollectionResponseNFT,
+} from "../../types/alchemy";
 import fetcher from "../../utils/fetcher";
 import { formatTokenId } from "../../utils/format";
 import NFTBox from "../nft-box/NFTBox";
-import styles from "./NFTLister.module.css";
 import Modal from "../modal/Modal";
+import Button from "../button/Button";
+import NFTDetails from "../nft-details/NFTDetails";
+import type { NFTDetails as NFTDetailsType } from "../nft-details/NFTDetails";
+import styles from "./NFTLister.module.css";
+
+const reduceNFTDetails = ({
+  id: {
+    tokenId,
+    tokenMetadata: { tokenType },
+  },
+  title,
+  description,
+  media,
+  metadata: { attributes },
+}: GetNFTsForCollectionResponseNFT) => ({
+  tokenId: formatTokenId(tokenId),
+  tokenType,
+  title,
+  description,
+  media: media.map(({ thumbnail }) => thumbnail),
+  attributes,
+});
 
 type NFTListerProps = { contractAddress: string };
 
 const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
-  const [showModalId, setShowModalId] = useState<string | null>(null);
+  const [selectedNFT, setSelectedNFT] = useState<NFTDetailsType | null>(null);
 
   const { data, error, isLoading } = useSWR<GetNFTsForCollectionResponse>(
     contractAddress ? getNFTsForCollection(contractAddress) : null,
     fetcher
   );
 
-  const handleShowNFTDetailsModal = (tokenId: string) =>
-    setShowModalId(tokenId);
-  const handleCloseNFTDetailsModal = () => setShowModalId(null);
+  const handleShowNFTDetailsModal = (nftDetails: NFTDetailsType) =>
+    setSelectedNFT(nftDetails);
+  const handleCloseNFTDetailsModal = () => setSelectedNFT(null);
+
+  const handleOpenSeaOpen = () => {
+    if (!selectedNFT) {
+      return;
+    }
+
+    const openSeaUrl = "https://opensea.io/assets/ethereum/";
+    window.open(
+      `${openSeaUrl}${contractAddress}/${selectedNFT.tokenId}`,
+      "_blank",
+      "noreferrer"
+    );
+  };
 
   if (isLoading) {
     return (
@@ -40,17 +76,29 @@ const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
   return (
     <div className={styles.container}>
       {data &&
-        data.nfts.map((nft) => (
-          <NFTBox
-            key={nft.id.tokenId}
-            id={formatTokenId(nft.id.tokenId)}
-            media={nft.media[0].thumbnail}
-            title={nft.title}
-            onShowDetails={() => handleShowNFTDetailsModal(nft.id.tokenId)}
-          />
-        ))}
-      <Modal isOpen={!!showModalId} onClose={handleCloseNFTDetailsModal}>
-        {showModalId}
+        data.nfts
+          .map((nft) => reduceNFTDetails(nft))
+          .map((nftDetails) => (
+            <NFTBox
+              key={nftDetails.tokenId}
+              id={nftDetails.tokenId}
+              media={nftDetails.media[0]}
+              title={nftDetails.title}
+              onShowDetails={() => handleShowNFTDetailsModal(nftDetails)}
+            />
+          ))}
+      <Modal isOpen={!!selectedNFT} onClose={handleCloseNFTDetailsModal}>
+        {selectedNFT && (
+          <>
+            <NFTDetails nftDetails={selectedNFT} />
+            <Button
+              className={styles.buyButton}
+              onClick={() => handleOpenSeaOpen()}
+            >
+              Buy on OpenSea
+            </Button>
+          </>
+        )}
       </Modal>
     </div>
   );

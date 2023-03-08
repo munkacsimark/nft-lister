@@ -5,7 +5,7 @@
   --light-gray: #999;
   --white: #eaeaea;
   --cyan: #01f9ff;
-  --teal: #439899;
+  --teal: #005455;
   --red: #fb3030;
 
   --background-color: var(--black);
@@ -17,9 +17,9 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background-color: var(--white);
+    --background-color: var(--light-gray);
     --text-color: var(--black);
-    --box-color: var(--light-gray);
+    --box-color: var(--white);
     --border-color: var(--gray);
     --cta-color: var(--teal);
   }

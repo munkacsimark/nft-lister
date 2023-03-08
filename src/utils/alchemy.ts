@@ -1,4 +1,4 @@
-import { NftTokenType } from "alchemy-sdk";
+import type { NftTokenType } from "alchemy-sdk";
 
 const apiUrl = `https://eth-mainnet.g.alchemy.com/nft/v2/${
   import.meta.env.VITE_ALCHEMY_API_KEY

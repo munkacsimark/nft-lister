@@ -26,11 +26,16 @@ const Modal: FunctionComponent<ModalProps> = ({
               >
                 <path
                   d="m10.458 31.458-1.916-1.916 9.5-9.542-9.5-9.542 1.916-1.916 9.542 9.5 9.542-9.5 1.916 1.916-9.5 9.542 9.5 9.542-1.916 1.916-9.542-9.5Z"
-                  fill="#111"
+                  fill={
+                    window.matchMedia &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches
+                      ? "#eaeaea"
+                      : "#111"
+                  }
                 />
               </svg>
             </header>
-            {children}
+            <div className={styles.content}>{children}</div>
           </div>
           <div className={styles.backdrop} onClick={() => onClose()} />
         </div>,
