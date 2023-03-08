@@ -3,6 +3,7 @@ import useSWR from "swr";
 import { getNFTsForCollection } from "../../utils/alchemy";
 import type { GetNFTsForCollectionResponse } from "../../types/alchemy-responses";
 import fetcher from "../../utils/fetcher";
+import { formatTokenId } from "../../utils/format";
 import NFTBox from "../nft-box/NFTBox";
 import styles from "./NFTLister.module.css";
 
@@ -10,7 +11,7 @@ type NFTListerProps = { contractAddress: string };
 
 const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
   const { data, error, isLoading } = useSWR<GetNFTsForCollectionResponse>(
-    false ? getNFTsForCollection(contractAddress) : null,
+    contractAddress ? getNFTsForCollection(contractAddress) : null,
     fetcher
   );
 
@@ -19,11 +20,17 @@ const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
   };
 
   if (isLoading) {
-    return <div className={styles.container}>Loading...</div>;
+    return (
+      <div className={`${styles.container} ${styles.loading}`}>Loading...</div>
+    );
   }
 
   if (error) {
-    return <div className={styles.container}>Error happened</div>;
+    return (
+      <div className={`${styles.container} ${styles.error}`}>
+        Error happened. 😢
+      </div>
+    );
   }
 
   return (
@@ -32,7 +39,9 @@ const NFTLister: FunctionComponent<NFTListerProps> = ({ contractAddress }) => {
         data.nfts.map((nft) => (
           <NFTBox
             key={nft.id.tokenId}
-            id={nft.id.tokenId}
+            id={formatTokenId(nft.id.tokenId)}
+            media={nft.media[0].thumbnail}
+            title={nft.title}
             onShowDetails={() => handleShowNFTDetails(nft.id.tokenId)}
           />
         ))}

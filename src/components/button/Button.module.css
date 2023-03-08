@@ -1,22 +1,29 @@
 .button {
   padding: 1rem 2rem;
   border-radius: 0.5rem;
-  border: none;
-  color: var(--black);
+  border: 1px solid;
   font-weight: 700;
   font-size: 2rem;
-}
-
-@media (prefers-color-scheme: light) {
-  .button {
-    color: var(--white);
-  }
+  cursor: pointer;
 }
 
 .primary {
   background-color: var(--cta-color);
+  border-color: var(--cta-color);
+  color: var(--black);
 }
 
 .secondary {
-  background-color: var(--box-color);
+  background-color: var(--background-color);
+  border-color: var(--border-color);
+  color: var(--white);
+}
+
+@media (prefers-color-scheme: light) {
+  .primary {
+    color: var(--white);
+  }
+  .secondary {
+    color: var(--black);
+  }
 }

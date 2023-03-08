@@ -1,3 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(100vw - 2 * 2rem); /* Nedd to substract paddings */
+  /* Width can be set explicitly because addresses have fixed length */
+  max-width: 55rem;
+}
+
+.input {
+  width: 100%;
+}
+
+.button {
+  margin-top: 2rem;
+  width: fit-content;
+}
+
 .error {
+  margin: 1rem auto 0 auto;
   color: var(--red);
 }

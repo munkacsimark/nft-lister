@@ -5,30 +5,36 @@ import { NftTokenType } from "alchemy-sdk";
 type GetNFTsForCollectionResponse = {
   nextToken?: string;
   nfts: {
+    contract: {
+      address: string;
+    };
     id: {
       tokenId: string;
       tokenMetadata: {
         tokenType: NftTokenType;
       };
     };
-    tokenUri: { raw: string; gateway: string };
+    title: string;
+    description: string;
+    tokenUri: {
+      gateway: string;
+      raw: string;
+    };
+    media: [
+      {
+        gateway: string;
+        thumbnail: string;
+        raw: string;
+        format: string;
+        bytes: number;
+      }
+    ];
     metadata: {
       image: string;
-      external_image: string;
-      background_color: string;
-      name: string;
-      description: string;
       attributes: {
         value: string;
         trait_type: string;
       }[];
-      media: {
-        raw: string;
-        gateway: string;
-        thumbnail: string;
-        format: string;
-        bytes: number;
-      };
     };
     timeLastUpdated: string;
     contractMetadata: {
@@ -38,17 +44,17 @@ type GetNFTsForCollectionResponse = {
       tokenType: NftTokenType;
       contractDeployer: string;
       deployedBlockNumber: number;
-      opensea: {
+      openSea: {
         floorPrice: number;
         collectionName: string;
+        safelistRequestStatus: string;
+        imageUrl: string;
+        description: string;
+        externalUrl: string;
+        twitterUsername: string;
+        discordUrl: string;
+        lastIngestedAt: string;
       };
-      safelistRequestStatus: string;
-      imageUrl: string;
-      description: string;
-      externalUrl: string;
-      twitterUsername: string;
-      discordUrl: string;
-      lastIngestedAt: string;
     };
   }[];
 };
