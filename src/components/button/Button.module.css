@@ -1,0 +1,22 @@
+.button {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  color: var(--black);
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .button {
+    color: var(--white);
+  }
+}
+
+.primary {
+  background-color: var(--cta-color);
+}
+
+.secondary {
+  background-color: var(--box-color);
+}

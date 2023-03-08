@@ -6,6 +6,7 @@
   --white: #eaeaea;
   --cyan: #01f9ff;
   --teal: #439899;
+  --red: #fb3030;
 
   --background-color: var(--black);
   --text-color: var(--white);
@@ -16,10 +17,10 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background-color: var(--light-gray);
+    --background-color: var(--white);
     --text-color: var(--black);
-    --box-color: var(--gray);
-    --border-color: var(--dark-gray);
+    --box-color: var(--light-gray);
+    --border-color: var(--gray);
     --cta-color: var(--teal);
   }
 }
@@ -36,6 +37,8 @@ html {
 
   background-color: var(--background-color);
   color: var(--text-color);
+
+  font-size: 62.5%; /* Allows to work easier with rem */
 }
 
 /* Reset styles */
@@ -48,6 +51,8 @@ html {
 
 body {
   margin: 0;
+  font-size: 1.6rem;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 strong {
